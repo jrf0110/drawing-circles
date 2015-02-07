@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <script src="/dist/app.js"></script>
+    <link rel="stylesheet" href="/dist/app.css">
+    <script>
+      var PERIOD    = 20;
+      var AMPLITUDE = 50;
+    </script>
+  </head>
+  <body>
+    <canvas data-processing-sources="/sketches/circle_4/circle_4.pde"></canvas>
+    <div id="period-view" class="variable-control" data-variable-control="PERIOD">
+      <label>PERIOD</label>
+      <input type="range" class="control" min="1" max="100" step="1">
+      <span class="value"></span>
+    </div>
+
+    <div id="amplitude-view" class="variable-control" data-variable-control="AMPLITUDE">
+      <label>AMPLITUDE</label>
+      <input type="range" class="control" min="1" max="100" step="1">
+      <span class="value"></span>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="stylesheet" href="/dist/app.css">
+    <script type="text/javascript"
+      src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script src="/dist/app.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>What Drawing Circles Taught Me</h1>
+      
+      <p>Despite having been a developer for 10 years, I've yet to seriously get into computer graphics. I've often fantasized about making novel video games and beautiful computer generated art, but never got around to it. Let's change that.</p>
+      
+      <p><a href="https://processing.org/">Processing</a> is the graphics platform I've been playing with. It's free, open source, and available on Linux, OS/X, and Windows. It compiles down to Java, so anywhere the JVM is installed, Processing can run (probably).</p>
+      
+      <h2>Boilerplate setup</h2>
+      
+      <p>Here's what a barebones processing sketch looks like:</p>
+
+<pre><code class="java">void setup(){
+  // Setup the size of your canvas to 500px by 100px
+  size( 500, 100 );
+}
+
+// This function is called for each animation frame
+void draw(){
+  // Redraw the entire canvas with black each frame
+  background(0);
+}</code></pre>
+      
+      <p>Unless otherwise required, I'm going to omit the `setup()` definition to keep things shorter.</p>
+      
+      <h2>What to draw first?</h2>
+      
+      <p>My first idea was to simply get an ellipse drawn on the screen. Let's draw a 5px wide circle at the coordindates (250, 50), or rather, at the center of the canvas -</p>
+      
+<pre><code class="java">void draw(){
+  // Make the canvas solid black
+  background(0);
+
+  // Prepare x,y coordinates
+  float x = 250;
+  float y = 50;
+
+  float width = 5;
+  float height = 5;
+
+  // Draw circle 
+  ellipse( x, y, width, height );
+}</code></pre>
+  
+      <iframe
+        src="/circle-1.html"
+        height="100"
+        frameborder="0"
+        class="iframe-example"></iframe>
+      
+      <p>Yay!</p>
+      
+      <p>And if that last act didn't bore you, let's make the circle smoothly move back and forth -</p>
+      
+<pre><code class="java">float PERIOD = 100;
+float AMPLITUDE = 100;
+
+void draw(){
+  background(0);
+
+  float i = (float) frameCount;
+  
+  // Starting point
+  float x = 250;
+  
+  // Change PERIOD and AMPLITUDE with the sliders
+  x += sin( i / PERIOD ) * AMPLITUDE;
+
+  ellipse( x, 50, 5, 5 );
+}</pre></code>
+      <iframe
+        src="/circle-2.html"
+        height="160"
+        frameborder="0"
+        class="iframe-example"></iframe>
+      
+      <p>We're using a periodic function called <a href="http://en.wikipedia.org/wiki/Sine">Sine</a> to smoothly transform the value <code>250</code>. For each <code>x</code> value, the returned values for sin continulously vary between -1 and 1.</p>
+
+      <p>This is perhaps best explained by the <code>sin(x)</code> graph itself:</p>
+
+      <iframe
+        src="/sin.html"
+        height="160"
+        frameborder="0"
+        class="iframe-example"></iframe>
+
+      Notice how the y value varies between 0 and 2 times its amplitude. We use this to create the movement in the previous example.
+
+      <h2>Let's make an ellipse go into orbit</h2>
+
+      <p>We've seen how to make an object move smoothly back and forth, now what about orbit? For that, we'll use what's called a <a href="http://en.wikipedia.org/wiki/Parametric_equation" target="_blank">parametric equation</a>. Basically, you use a single function to define the value of x and a single function to define the value of y.</p>
+
+      <p>For instance, the following is the parametric equation for a circle:</p>
+
+      $$x: sin(t)$$
+      $$y: cos(t)$$
+
+      <p>What does that mean, though? It means for any given moment in time, let's draw a dot at \(x = sin(t)\) and \(y = cos(t)\) where t is time. What does that look like?</p>
+
+      <iframe
+        src="/circle-3.html"
+        height="380"
+        frameborder="0"
+        class="iframe-example"></iframe>
+
+<pre><code class="java">void draw(){
+  background(0);
+
+  float i = (float) frameCount;
+  
+  // Starting point
+  float x = 250;
+  float y = height / 2;
+  
+  // Change PERIOD and AMPLITUDE with the sliders
+  x += sin( i / PERIOD ) * AMPLITUDE;
+  y += cos( i / PERIOD ) * AMPLITUDE;
+
+  outputVariables( x, y );
+
+  ellipse( x, y, 5, 5 );
+}</code></pre>
+
+      <p>Pretty nifty, huh? Let's add another, circle and make them sort of, spin in the same orbit, but directly across from each other:</p>
+
+      <iframe
+        src="/circle-4.html"
+        height="380"
+        frameborder="0"
+        class="iframe-example"></iframe>
+
+<pre><code class="java">//float PERIOD = 20;
+//float AMPLITUDE = 50;
+
+void setup(){
+  size( 500, 300 );
+}
+
+void outputVariables( float x, float y ){
+  fill(0);
+  noStroke();
+  rect( width - 65, 0, width, 44 );
+  textSize(16);
+  fill(255);
+  text( "x: " + round( x ), width - 60, 20 );
+  text( "y: " + round( y ), width - 60, 40 );
+}
+
+void draw(){
+  background(0);
+
+  float i = (float) frameCount;
+  
+  // Starting point
+  float x1 = 250;
+  float y1 = height / 2;
+  float x2 = x1;
+  float y2 = y1;
+
+  float x2y2offset = PI * PERIOD;
+  
+  // Change PERIOD and AMPLITUDE with the sliders
+  x1 += sin( i / PERIOD ) * AMPLITUDE;
+  y1 += cos( i / PERIOD ) * AMPLITUDE;
+  
+  x2 += sin( ( i + x2y2offset ) / PERIOD ) * AMPLITUDE;
+  y2 += cos( ( i + x2y2offset  ) / PERIOD ) * AMPLITUDE;
+
+  ellipse( x1, y1, 5, 5 );
+  ellipse( x2, y2, 5, 5 );
+}</code></pre>
+
+      <p>Oh man, this is getting unwieldy. Surely we can keep our code <a href="http://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a>, and clean some of this up.</p>
+
+      <p>TODO: cleanup code with classes and loops</p>
+
+      <p>That's better.</p>
+
+      <p>Play around with the sliders in the previous example. Notice how amplitude now corresponds to the length of the line that joins these two points. We're finally getting into something whose usefulness is at a higher of level than the immediately solveable problem.</p>
+    </div>
+  </body>
+</html>

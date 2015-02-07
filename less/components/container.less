@@ -1,0 +1,15 @@
+///////////////
+// Container //
+///////////////
+
+.container {
+  display: table;
+  max-width: @container-max-width;
+  margin-left: @container-gutter;
+  margin-right: @container-gutter;
+
+  @media screen and ( min-width: @container-max-width ){
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
