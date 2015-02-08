@@ -118,7 +118,7 @@ void draw(){
   float i = (float) frameCount;
   
   // Starting point
-  float x = 250;
+  float x = width / 2;
   float y = height / 2;
   
   // Change PERIOD and AMPLITUDE with the sliders
@@ -138,30 +138,13 @@ void draw(){
         frameborder="0"
         class="iframe-example"></iframe>
 
-<pre><code class="java">//float PERIOD = 20;
-//float AMPLITUDE = 50;
-
-void setup(){
-  size( 500, 300 );
-}
-
-void outputVariables( float x, float y ){
-  fill(0);
-  noStroke();
-  rect( width - 65, 0, width, 44 );
-  textSize(16);
-  fill(255);
-  text( "x: " + round( x ), width - 60, 20 );
-  text( "y: " + round( y ), width - 60, 40 );
-}
-
-void draw(){
+<pre><code class="java">void draw(){
   background(0);
 
   float i = (float) frameCount;
   
   // Starting point
-  float x1 = 250;
+  float x1 = width / 2;
   float y1 = height / 2;
   float x2 = x1;
   float y2 = y1;
@@ -181,11 +164,216 @@ void draw(){
 
       <p>Oh man, this is getting unwieldy. Surely we can keep our code <a href="http://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a>, and clean some of this up.</p>
 
-      <p>TODO: cleanup code with classes and loops</p>
+      <h3>Cleaning up with Classes</h3>
+
+      <p>To cleanup our code, we're going to use what's called <a href="https://processing.org/reference/class.html">a class.</a> For those of you unfamiliar with Classes, they are a programming construct to define the structure and interactions of data. You can think of them of ways to encapsulate concepts.</p>
+
+      <p>Sorry, that said a lot without actually saying anything. Think of them as prototypes that you can copy from. Some folks will say this is a bad and conflated analogy, but to those detractors I say, "hey, I don't give a damn."</p>
+
+      <p>So, you think, I want to prototype, or model, a wide variety of cars. How would I reprsent them? We need to reprent things like:</p>
+
+      <ul>
+        <li>Make</li>
+        <li>Model</li>
+        <li>Color</li>
+        <li>Velocity</li>
+        <li>Position</li>
+      </ul>
+
+      <p>A class would allow us to do something like this:</p>
+
+<pre><code class="java">
+  car1 = new Car( "Toyota", "Prius" );
+  car2 = new Car( "Honda", "Civic" );
+
+  // car1.make is Toyota
+  // while car2.make is Honda
+</code></pre>
+
+      <p>We create objects based on pre-defined properties (such as Make/Model). Here's what our car Class might look like</p>
+
+<pre><code class="java">
+class Car {
+  string make;
+  string model;
+
+  // By default, all cars are white
+  string color = "white";
+
+  // What's our position in space?
+  float x = 0;
+  float y = 0;
+
+  // When cars are created, set the make and model
+  Car( string _make, string _model ){
+    make = _make;
+    model = _model;
+  }
+
+  void drive( float _x, float _y ){
+    x = _x;
+    y = _y;
+  }
+}
+</code></pre>
+
+      <p>Let's see what we can do:</p>
+
+<pre><code class="java">
+  car1 = new Car( "Toyota", "Prius" );
+  // Currently, car1.x is 0 and car1.y is 0
+
+  // Drive to (100, 50) at 10mph
+  car1.drive( 100, 50, 10 );
+
+  // Now, car1.x = 100 and car1.y = 50
+</code></pre>
+
+      <h3>How can we utilize classes?</h3>
+
+      <p>This may seem all a bit <em>abstruse</em>, but classes will help us modularize our code into understandable chumks. That will then allow us to do some really neato stuff.</p>
+
+      <p>Naming is pretty important in programming, but I couldn't think of a good name. I'm just going to call our helper class "XObject" because that sounded generic and cool enough for me.</p>
+
+      <strong>xobject.pde</strong>
+
+<pre><code class="java">
+class XObject {
+  float x = 0;
+  float y = 0;
+  float size = 5;
+  
+  float xOrigin = 0;
+  float yOrigin = 0;
+  
+  float xOffset = 0;
+  float yOffset = 0;
+  
+  float period = 20;
+  float amplitude = 50;
+  
+  XObject( float _x, float _y ){
+    xOrigin = _x;
+    yOrigin = _y;
+  }
+  
+  void update( float frame ){
+    x = xOrigin;
+    y = yOrigin;
+    
+    x += sin( ( frame + xOffset ) / PERIOD ) * AMPLITUDE;
+    y += cos( ( frame + yOffset ) / PERIOD ) * AMPLITUDE;
+
+    ellipse( x, y, size, size );
+  }
+}
+</code></pre>
+
+      <p>And here's our new main sketch file:</p>
+
+<pre><code class="java">float PERIOD = 20;
+float AMPLITUDE = 50;
+
+// Wait to instantiate our objects because we need to
+// know the dimensions of our canvas
+XObject o1;
+XObject o2;
+
+void setup() {
+  size( 500, 300 );
+
+  // Instantiate our objects, setting our origins at the center
+  o1 = new XObject( width / 2, height / 2 );
+  o2 = new XObject( o1.xOrigin, o1.yOrigin );
+}
+
+void draw() {
+  background(0);
+
+  float i = (float) frameCount;
+
+  // In our example, we update the period and amplitue on
+  // the fly with sliders. We need to re-update the values
+  o1.period     = PERIOD;
+  o2.period     = PERIOD;
+  o1.amplitude  = AMPLITUDE;
+  o2.amplitude  = AMPLITUDE;
+  
+  // Object2 has an offset on the unit circle
+  // The circles diameter is equal 2*PI*period
+  // So, halfway around the circle is just PI*period
+  o2.xOffset = PI * o2.period;
+  o2.yOffset = PI * o2.period;
+
+  // Call the objects drawing logic with the current frame
+  o1.update( i );
+  o2.update( i );
+}
+</code></pre>
+  
+      <iframe
+        src="/circle-5.html"
+        height="380"
+        frameborder="0"
+        class="iframe-example"></iframe>
 
       <p>That's better.</p>
 
       <p>Play around with the sliders in the previous example. Notice how amplitude now corresponds to the length of the line that joins these two points. We're finally getting into something whose usefulness is at a higher of level than the immediately solveable problem.</p>
+
+      <h3>Why do classes matter?</h3>
+
+      <p>Now we can have fun with loops :)</p>
+
+      <iframe
+        src="/circle-6.html"
+        height="380"
+        frameborder="0"
+        class="iframe-example"></iframe>
+
+      <p class="tip">Experiment with moving the AMPLITUDE toggle back and forth very fast. Change the PERIOD to see how that affects the pattern.</p>
+
+      <p>Here's the code for the above example:</p>
+
+<pre><code class="java">float PERIOD = 20;
+float AMPLITUDE = 50;
+
+// Number of XObjects we're going to draw
+int NUM_OBJECTS = 30;
+
+// This is an array of XObjects
+XObject[] objects = new XObject[ NUM_OBJECTS ];
+
+void setup() {
+  size( 500, 300 );
+  initObjects();
+}
+
+void initObjects(){
+  for ( int i = 0; i < NUM_OBJECTS; i++ ){
+    objects[i] = new XObject( width / 2, height / 2 ); 
+  }
+}
+
+void draw() {
+  background(0);
+
+  float frame = (float) frameCount;
+
+  for ( int i = 0; i < NUM_OBJECTS; i++ ){
+    objects[i].updateUserVars( PERIOD, AMPLITUDE );
+    
+    // Evenly place objects along the circle
+    // Remember that ( 2 * PI * PERIOD ) is the diameter
+    // diameter / NUM_OBJECTS is the length of an arc between
+    // each object. Multiply it by its index in the array to
+    // its position on the circle
+    objects[i].xOffset = ( ( 2 * PI * PERIOD ) / NUM_OBJECTS ) * i;
+    objects[i].yOffset = objects[i].xOffset;
+    
+    objects[i].update( frame );
+  }
+}</code></pre>
     </div>
   </body>
 </html>
