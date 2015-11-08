@@ -4,13 +4,12 @@
     <script src="/dist/app.js"></script>
     <link rel="stylesheet" href="/dist/app.css">
     <script>
-      var PERIOD      = 20;
-      var AMPLITUDE   = 50;
-      var NUM_OBJECTS = 50;
+      var PERIOD    = 20;
+      var AMPLITUDE = 50;
     </script>
   </head>
   <body>
-    <canvas data-processing-sources="/sketches/circle_6/xobject.pde /sketches/circle_6/circle_6.pde"></canvas>
+    <canvas data-processing-sources="/sketches/circle_5a/xobject.pde /sketches/circle_5a/circle_5a.pde"></canvas>
     <div id="period-view" class="variable-control" data-variable-control="PERIOD">
       <label>PERIOD</label>
       <input type="range" class="control" min="1" max="100" step="1">
@@ -20,12 +19,6 @@
     <div id="amplitude-view" class="variable-control" data-variable-control="AMPLITUDE">
       <label>AMPLITUDE</label>
       <input type="range" class="control" min="1" max="100" step="1">
-      <span class="value"></span>
-    </div>
-
-    <div id="amplitude-view" class="variable-control" data-variable-control="NUM_OBJECTS">
-      <label>NUM_OBJECTS</label>
-      <input type="range" class="control" min="2" max="32" step="1">
       <span class="value"></span>
     </div>
   </body>

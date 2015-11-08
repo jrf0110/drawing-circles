@@ -1,11 +1,13 @@
 //float PERIOD = 20;
 //float AMPLITUDE = 50;
-
-// Number of XObjects we're going to draw
-//int NUM_OBJECTS = 30;
+//
+//// Number of XObjects we're going to draw
+//int NUM_OBJECTS = 3;
 
 // This is an array of XObjects
 XObject[] objects = new XObject[ NUM_OBJECTS ];
+
+int pNumObjects = 0;
 
 void setup() {
   size( 500, 300 );
@@ -13,13 +15,25 @@ void setup() {
 
 void initObjects(){
   for ( int i = 0; i < NUM_OBJECTS; i++ ){
-    objects[i] = new XObject( width / 2, height / 2 ); 
+    objects[i] = new XObject( width / 2, height / 2 );
+    if ( i > 0 ){
+      objects[ i - 1 ].connect( objects[ i ] );
+    }
+   
+   if ( i == NUM_OBJECTS - 1 ){
+     objects[ i ].connect( objects[0] );
+   }
   }
 }
 
 void draw() {
   background(0);
-  initObjects();
+  
+  if ( pNumObjects != NUM_OBJECTS ){
+    initObjects();
+  }
+  
+  pNumObjects = NUM_OBJECTS;
 
   float frame = (float) frameCount;
 
@@ -35,5 +49,9 @@ void draw() {
     objects[i].yOffset = objects[i].xOffset;
     
     objects[i].update( frame );
+  }
+  
+  for ( int i = 0; i < NUM_OBJECTS; i++ ){
+    objects[i].updateLines( frame );
   }
 }

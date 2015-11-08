@@ -2,13 +2,14 @@
 //float AMPLITUDE = 50;
 
 // Number of XObjects we're going to draw
-//int NUM_OBJECTS = 30;
+int NUM_OBJECTS = 100;
 
 // This is an array of XObjects
 XObject[] objects = new XObject[ NUM_OBJECTS ];
 
 void setup() {
   size( 500, 300 );
+  initObjects();
 }
 
 void initObjects(){
@@ -19,7 +20,6 @@ void initObjects(){
 
 void draw() {
   background(0);
-  initObjects();
 
   float frame = (float) frameCount;
 

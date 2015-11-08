@@ -9,7 +9,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>What Drawing Circles Taught Me</h1>
+      <h1>Drawing Circles</h1>
       
       <p>Despite having been a developer for 10 years, I've yet to seriously get into computer graphics. I've often fantasized about making novel video games and beautiful computer generated art, but never got around to it. Let's change that.</p>
       
@@ -101,6 +101,7 @@ void draw(){
 
       <p>For instance, the following is the parametric equation for a circle:</p>
 
+      $$(x, y) = f(t) = (sin(t), cos(t))$$
       $$x: sin(t)$$
       $$y: cos(t)$$
 
@@ -124,8 +125,6 @@ void draw(){
   // Change PERIOD and AMPLITUDE with the sliders
   x += sin( i / PERIOD ) * AMPLITUDE;
   y += cos( i / PERIOD ) * AMPLITUDE;
-
-  outputVariables( x, y );
 
   ellipse( x, y, 5, 5 );
 }</code></pre>
@@ -155,6 +154,7 @@ void draw(){
   x1 += sin( i / PERIOD ) * AMPLITUDE;
   y1 += cos( i / PERIOD ) * AMPLITUDE;
   
+  // Move the x2, y2 values forward in time by adding to
   x2 += sin( ( i + x2y2offset ) / PERIOD ) * AMPLITUDE;
   y2 += cos( ( i + x2y2offset  ) / PERIOD ) * AMPLITUDE;
 
@@ -162,21 +162,21 @@ void draw(){
   ellipse( x2, y2, 5, 5 );
 }</code></pre>
 
-      <p>Oh man, this is getting unwieldy. Surely we can keep our code <a href="http://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a>, and clean some of this up.</p>
+      <p>Oh man, this is getting unwieldy. Surely there's a way we can keep our code <a href="http://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a>.</p>
 
       <h3>Cleaning up with Classes</h3>
 
-      <p>To cleanup our code, we're going to use what's called <a href="https://processing.org/reference/class.html">a class.</a> For those of you unfamiliar with Classes, they are a programming construct to define the structure and interactions of data. You can think of them of ways to encapsulate concepts.</p>
+      <p>We're going to use what's called a <a href="https://processing.org/reference/class.html">class.</a> For those of you unfamiliar with Classes, they are a programming construct to define the structure and interactions of data. You can think of them of ways to encapsulate concepts.</p>
 
-      <p>Sorry, that said a lot without actually saying anything. Think of them as prototypes that you can copy from. Some folks will say this is a bad and conflated analogy, but to those detractors I say, "hey, I don't give a damn."</p>
+      <p>Sorry, that said a lot without actually saying anything - Think of them as prototypes that you can copy from. Some folks will say this is a bad and conflated analogy, but to those detractors I say, "hey, I don't give a damn."</p>
 
-      <p>So, you think, I want to prototype, or model, a wide variety of cars. How would I reprsent them? We need to reprent things like:</p>
+      <p>How would you prototype, or model, a variety of cars? What descriptors do they all have in common? We might describe a car as having these properties:</p>
 
       <ul>
         <li>Make</li>
         <li>Model</li>
         <li>Color</li>
-        <li>Velocity</li>
+        <li>Speed</li>
         <li>Position</li>
       </ul>
 
@@ -184,28 +184,35 @@ void draw(){
 
 <pre><code class="java">
   car1 = new Car( "Toyota", "Prius" );
-  car2 = new Car( "Honda", "Civic" );
+  car2 = new Car( "Chevrolet", "Corvette" );
 
   // car1.make is Toyota
-  // while car2.make is Honda
+  // while car2.make is Chevrolet
+
+  car1.goReallyFast();
+  car2.goReallyFast();
+
+  if ( car1.speed > car2.speed ){
+    println("Passed by a Prius, bro.");
+  }
 </code></pre>
 
       <p>We create objects based on pre-defined properties (such as Make/Model). Here's what our car Class might look like</p>
 
 <pre><code class="java">
 class Car {
-  string make;
-  string model;
+  String make;
+  String model;
 
   // By default, all cars are white
-  string color = "white";
+  String color = "white";
 
   // What's our position in space?
   float x = 0;
   float y = 0;
 
   // When cars are created, set the make and model
-  Car( string _make, string _model ){
+  Car( String _make, String _model ){
     make = _make;
     model = _model;
   }
@@ -229,11 +236,11 @@ class Car {
   // Now, car1.x = 100 and car1.y = 50
 </code></pre>
 
+      <p>This may seem a bit <em>abstruse</em>, but classes will help modularize our code into understandable chunks. Once things are understood and implemented into small, composable pieces, we can really do some neato tricks.</p>
+
       <h3>How can we utilize classes?</h3>
 
-      <p>This may seem all a bit <em>abstruse</em>, but classes will help us modularize our code into understandable chumks. That will then allow us to do some really neato stuff.</p>
-
-      <p>Naming is pretty important in programming, but I couldn't think of a good name. I'm just going to call our helper class "XObject" because that sounded generic and cool enough for me.</p>
+      <p>Naming is pretty important in programming, but I couldn't think of a good name - So, I'm just going to call our helper class "XObject" because that sounded generic and cool enough for me.</p>
 
       <strong>xobject.pde</strong>
 
@@ -321,13 +328,31 @@ void draw() {
 
       <p>Play around with the sliders in the previous example. Notice how amplitude now corresponds to the length of the line that joins these two points. We're finally getting into something whose usefulness is at a higher of level than the immediately solveable problem.</p>
 
+      <h3>Connecting the cirlces with a line</h3>
+
+      <p>Now, let's connect the circles with a line:</p>
+
+      <iframe
+        src="/circle-5a.html"
+        height="380"
+        frameborder="0"
+        class="iframe-example"></iframe>
+
+        <p>Simply add the following code to the end of your draw function (after the two update statements).</p>
+
+<pre><code class="java">
+// Draw a line between o1 and o2
+stroke(255);
+line( o1.x, o1.y, o2.x, o2.y );
+</code></pre>
+
       <h3>Why do classes matter?</h3>
 
-      <p>Now we can have fun with loops :)</p>
+      <p>Because we've isolated the logic into an easily repeatable chunk, now we can have fun with loops :)</p>
 
       <iframe
         src="/circle-6.html"
-        height="380"
+        height="400"
         frameborder="0"
         class="iframe-example"></iframe>
 
@@ -374,6 +399,14 @@ void draw() {
     objects[i].update( frame );
   }
 }</code></pre>
+
+      <p>Let's add some connection logic from our previous example and draw lines to each object in the scene:</p>
+
+      <iframe
+        src="/circle-8.html"
+        height="400"
+        frameborder="0"
+        class="iframe-example"></iframe>
     </div>
   </body>
 </html>
